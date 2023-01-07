@@ -1,4 +1,3 @@
 # Linked-C
-![LinkedCLogo](https://user-images.githubusercontent.com/68484397/211122675-ee41869c-db06-47c9-b53b-fc96d54f19e6.jpg)  
-
+![Logo](https://user-images.githubusercontent.com/68484397/211122755-a220fdc9-c919-4ede-b4cb-5a768413f54f.png)
 ## About library  
