@@ -34,9 +34,11 @@
 * -> File Version Checks
 * ================================================================================================================================
 **/
-
-
-
+#if ( (COMPILER_CFG_SW_MAJOR_VERSION != COMPILER_SW_MAJOR_VERSION) || \
+      (COMPILER_CFG_SW_MINOR_VERSION != COMPILER_SW_MINOR_VERSION) || \
+      (COMPILER_CFG_SW_PATCH_VERSION != COMPILER_SW_PATCH_VERSION) ) 
+    #error ("`compiler_cfg.h` and `compiler.h` version doesn't met.")
+#endif
 /*
 * ================================================================================================================================
 * -> Compiler Generic Declaration

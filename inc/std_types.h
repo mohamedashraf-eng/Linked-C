@@ -31,8 +31,16 @@
 * -> File Version Checks
 * ================================================================================================================================
 **/
-
-
+#if ( (STD_SW_MAJOR_VERSION != PLATFORM_SW_MAJOR_VERSION) || \
+      (STD_SW_MINOR_VERSION != PLATFORM_SW_MINOR_VERSION) || \
+      (STD_SW_PATCH_VERSION != PLATFORM_SW_PATCH_VERSION) ) 
+    #error ("`platform_types.h` and `std_types.h` version doesn't met.")
+#endif
+#if ( (STD_SW_MAJOR_VERSION != COMPILER_SW_MAJOR_VERSION) || \
+      (STD_SW_MINOR_VERSION != COMPILER_SW_MINOR_VERSION) || \
+      (STD_SW_PATCH_VERSION != COMPILER_SW_PATCH_VERSION) ) 
+    #error ("`platform_types.h` and `compiler.h` version doesn't met.")
+#endif
 /*
 * ================================================================================================================================
 * -> Constants

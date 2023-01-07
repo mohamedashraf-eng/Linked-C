@@ -12,21 +12,17 @@
 /** @def Header Guards */
 #ifndef __PLATFORM_TYPES_H__
 #define __PLATFORM_TYPES_H__
-
 /*
 * ================================================================================================================================
 * -> File Version Information
 * ================================================================================================================================
 **/
-
 /** @brief Vendor specific ID */
 #define PLATFORM_VENDOR_ID 								   (1332)
 /** @brief Program based version */
 #define PLATFORM_SW_MAJOR_VERSION	 					 (1)
 #define PLATFORM_SW_MINOR_VERSION	 					 (0)
 #define PLATFORM_SW_PATCH_VERSION	 					 (0)
-
-
 /*
 * ================================================================================================================================
 * -> Macros
