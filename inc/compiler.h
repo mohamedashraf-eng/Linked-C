@@ -12,23 +12,19 @@
 /** @def Header Guards */
 #ifndef __COMPILER_H__
 #define __COMPILER_H__
-
 /** @brief Included headers */
 #include "compiler_cfg.h"
-
 /* 
  * =============================================================================
  * = SOURCE FILE VERSION INFORMATION
  * =============================================================================
 */
-
 /** @brief Vendor specific ID */
 #define COMPILER_VENDOR_ID 								   (1332)
 /** @brief Program based version */
 #define COMPILER_SW_MAJOR_VERSION	 					 (1)
 #define COMPILER_SW_MINOR_VERSION	 					 (0)
 #define COMPILER_SW_PATCH_VERSION	 					 (0)
-
 /*
 * ================================================================================================================================
 * -> File Version Checks
@@ -44,8 +40,8 @@
 * -> Compiler Generic Declaration
 * ================================================================================================================================
 **/
-
-
+/** @brief The compiler being used. */
+#define _GNU_C_
 /**
  * @brief Defining the compiler being used.
  * 
@@ -83,36 +79,7 @@
  * = COMPILER SPECIFIC DECLARATION
  * =============================================================================
 */
-
-#ifndef COMPILER_BEING_USED
-	#define COMPILER_BEING_USED
-#endif /* COMPILER_BEING_USED */
-
-/** 
- * @defgroup GREENHILLS Compiler specifications
-*/
-#ifdef _GREENHILLS_C_STM32F103_
-	/**
-	 * @brief The compiler abstraction shall provide the INLINE define for abstraction of the keyword
-	 * 				inline. 
-	 */
-	#define INLINE __inline
-	/**
-	 * @brief The compiler abstraction shall provide the LOCAL_INLINE define for abstraction of the keyword
-	 * 				inline in function with static scope. 
-	 */
-	#define STATIC 
-	#define LOCAL_INLINE STATIC INLINE
-	/**
-	 * @brief The compiler abstraction of specifiying an interrupt handler.
-	 */
-	#define INTERRUPT_FUNC __interrupt
-#endif /* _GREENHILLS_C_STM32F103_ */
-
-/** 
- * @defgroup IAR Compiler specifications
-*/
-#ifdef _IAR_C_STM32F103_
+#ifdef _GNU_C_
 	/**
 	 * @brief The compiler abstraction shall provide the INLINE define for abstraction of the keyword
 	 * 				inline. 
@@ -124,31 +91,8 @@
 	 */
 	#define STATIC static
 	#define LOCAL_INLINE STATIC INLINE
-	/**
-	 * @brief The compiler abstraction of specifiying an interrupt handler.
-	 */
-	#define INTERRUPT_FUNC 
-#endif /* _IAR_C_STM32F103_ */
-
-/** 
- * @defgroup GNU ARM Compiler specifications
-*/
-#ifdef _GNU_ARM_C_STM32F103_
-	/**
-	 * @brief The compiler abstraction shall provide the INLINE define for abstraction of the keyword
-	 * 				inline. 
-	 */
-	#define INLINE inline
-	/**
-	 * @brief The compiler abstraction shall provide the LOCAL_INLINE define for abstraction of the keyword
-	 * 				inline in function with static scope. 
-	 */
-	#define STATIC static
-	#define LOCAL_INLINE STATIC INLINE
-	/**
-	 * @brief The compiler abstraction of specifiying an interrupt handler.
-	 */
-	#define INTERRUPT_FUNC 
+	#define FORCE_INLINE __attribute__((always_inline))
+	#define FORCE_CONST __attribute__((const))
 #endif /* _GNU_ARM_C_STM32F103_ */
 /*
 * ================================================================================================================================
