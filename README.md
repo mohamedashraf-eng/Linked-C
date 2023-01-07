@@ -1,4 +1,6 @@
-# Linked-C
-![Logo](https://user-images.githubusercontent.com/68484397/211122909-70340a21-c065-44fe-9fc3-4df0b08ed1f6.png)
+# Linked-C  
+<p align="center">
+  <img width="460" height="300" src="https://j.top4top.io/p_2562ucj861.png">
+</p>
 
 ## About library  
