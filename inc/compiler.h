@@ -14,32 +14,38 @@
 #define __COMPILER_H__
 /** @brief Included headers */
 #include "compiler_cfg.h"
+
 /* 
  * =============================================================================
  * = SOURCE FILE VERSION INFORMATION
  * =============================================================================
 */
+
 /** @brief Vendor specific ID */
 #define COMPILER_VENDOR_ID 								   (1332)
 /** @brief Program based version */
 #define COMPILER_SW_MAJOR_VERSION	 					 (1)
 #define COMPILER_SW_MINOR_VERSION	 					 (0)
 #define COMPILER_SW_PATCH_VERSION	 					 (0)
+
 /*
 * ================================================================================================================================
 * -> File Version Checks
 * ================================================================================================================================
 **/
+
 #if ( (COMPILER_CFG_SW_MAJOR_VERSION != COMPILER_SW_MAJOR_VERSION) || \
       (COMPILER_CFG_SW_MINOR_VERSION != COMPILER_SW_MINOR_VERSION) || \
       (COMPILER_CFG_SW_PATCH_VERSION != COMPILER_SW_PATCH_VERSION) ) 
     #error ("`compiler_cfg.h` and `compiler.h` version doesn't met.")
 #endif
+
 /*
 * ================================================================================================================================
 * -> Compiler Generic Declaration
 * ================================================================================================================================
 **/
+
 /** @brief The compiler being used. */
 #define _GNU_C_
 /**
@@ -74,11 +80,12 @@
  */
 #define AUTOMATIC
 
-/* 
- * =============================================================================
- * = COMPILER SPECIFIC DECLARATION
- * =============================================================================
-*/
+/*
+* ================================================================================================================================
+* -> Compiler Specific Declarations
+* ================================================================================================================================
+**/
+
 #ifdef _GNU_C_
 	/**
 	 * @brief The compiler abstraction shall provide the INLINE define for abstraction of the keyword
@@ -94,47 +101,5 @@
 	#define FORCE_INLINE __attribute__((always_inline))
 	#define FORCE_CONST __attribute__((const))
 #endif /* _GNU_ARM_C_STM32F103_ */
-/*
-* ================================================================================================================================
-* -> Macros
-* ================================================================================================================================
-**/
-/**
- * @brief The compiler abstraction shall define the FUNC macro for the declaration and definitions of
- * 				functions, that ensures correct syntax of function declarations as required by a specific compiler.
- */
-#define FUNC(rettype, memclass) rettype
-/**
- * @brief The compiler abstraction shall define the P2VAR macro for the delcaration and definition of
- * 				pointers in RAM, pointing to variables.
- */
-#define P2VAR(ptrtype, memclass, ptrclass) ptrtype *
-/**
- * @brief The compiler abstraction shall define the P2CONST macro for the delcaration and definition of
- * 				pointers pointing to constants.
- */
-#define P2CONST(ptrtype, memclass, ptrclass) const ptrtype *
-/**
- * @brief The compiler abstraction shall define the CONSTP2CONST macro for the delcaration and definition of
- * 				constant pointers pointing to constants.
- */
-#define CONSTP2CONST(ptrtype, memclass, ptrclass) const ptrtype * const
-/**
- * @brief The compiler abstraction shall define the P2FUNC macro for the delcaration and definition of
- * 				pointer to function.
- */
-#define P2FUNC(rettype, ptrclass, fctname) rettype (*fctname)
-/**
- * @brief The compiler abstraction shall define the CONST macro for the delcaration and definition of
- * 				constants
- */
-#define CONST(consttype, memclass) const consttype
-/**
- * @brief The compiler abstraction shall define the VAR macro for the delcaration and definition of
- * 				variables.
- */
-#define VAR(vartype, memclass) vartype
- 
-
 
 #endif /* __COMPILER_H__ */

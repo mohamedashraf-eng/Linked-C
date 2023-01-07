@@ -15,22 +15,26 @@
 /** @brief Included headers */
 #include "platform_types.h"
 #include "compiler.h"
+
 /*
 * ================================================================================================================================
 * -> File Version Information
 * ================================================================================================================================
 **/
+
 /** @brief Vendor specific ID */
 #define STD_VENDOR_ID 						 			 (1332)
 /** @brief Program based version */
 #define STD_SW_MAJOR_VERSION	 			 		 (1)
 #define STD_SW_MINOR_VERSION	 			 		 (0)
 #define STD_SW_PATCH_VERSION	 			 		 (0)
+
 /*
 * ================================================================================================================================
 * -> File Version Checks
 * ================================================================================================================================
 **/
+
 #if ( (STD_SW_MAJOR_VERSION != PLATFORM_SW_MAJOR_VERSION) || \
       (STD_SW_MINOR_VERSION != PLATFORM_SW_MINOR_VERSION) || \
       (STD_SW_PATCH_VERSION != PLATFORM_SW_PATCH_VERSION) ) 
@@ -41,11 +45,13 @@
       (STD_SW_PATCH_VERSION != COMPILER_SW_PATCH_VERSION) ) 
     #error ("`platform_types.h` and `compiler.h` version doesn't met.")
 #endif
+
 /*
 * ================================================================================================================================
 * -> Constants
 * ================================================================================================================================
 **/
+
 /**
  * @brief This type can be used as standard API return type which is shared between the RTE and BSW modules.
  * @implements Std_ReturnType_type
