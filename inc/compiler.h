@@ -91,16 +91,17 @@
 	 * @brief The compiler abstraction shall provide the INLINE define for abstraction of the keyword
 	 * 				inline. 
 	 */
-	#define INLINE inline
+	#define _INLINE inline
 	/**
 	 * @brief The compiler abstraction shall provide the LOCAL_INLINE define for abstraction of the keyword
 	 * 				inline in function with static scope. 
 	 */
-	#define STATIC static
-	#define LOCAL_INLINE STATIC INLINE
-	#define FORCE_INLINE __attribute__((always_inline))
-	#define FORCE_CONST __attribute__((const))
-	#define FORCE_PACKING(PAD_SIZE) __attribute__((packed))
+	#define _STATIC static
+	#define _LOCAL_INLINE _STATIC _INLINE
+	#define _CONST const
+	#define _FORCE_INLINE __attribute__((always_inline))
+	#define _FORCE_CONST __attribute__((const))
+	#define _FORCE_PACKING(PAD_SIZE) __attribute__((packed))
 #endif /* _GNU_ARM_C_STM32F103_ */
 
 #endif /* __COMPILER_H__ */
