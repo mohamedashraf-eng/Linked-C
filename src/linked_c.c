@@ -287,6 +287,33 @@ _LOCAL_INLINE en_ll_log_status ll_append_node(
   return l_this_function_log_status;
 }
 
+/**
+ * @brief Function to insert a node in back (pushing).
+ * @note Simple iterator algorithm (to be modifed with front, rear).
+ *
+ * @details Explained..
+ * - passed reference to head
+ *    * head is NULL
+ *         |
+ * Create new node let the head point to it
+ *     `new_node`
+ * *        +-+
+ * * head-> | | ->NULL
+ * *        +-+
+ *    * head isn't NULL
+ *        |
+ * Let the next of the new node assigned with the head,
+ * let the head assigned with the new node.
+ *       `new_node` `node:2` `node:n`
+ * *         +-+       +-+     +-+   
+ * * head->  | | ->	   | | ... | | -> NULL
+ * *         +-+       +-+     +-+   
+ * @note Other validations are defined.
+ *
+ * @param pa_ll_head
+ * @param pa_ll_node_data
+ * @return en_ll_log_status
+ */
 _LOCAL_INLINE en_ll_log_status ll_push_node(
     lg_st_ll_ancestor_t **_CONST pa_ll_head, void *_CONST pa_ll_node_data) {
   en_ll_log_status l_this_function_log_status = LOG_STATUS_NOT_OK;
