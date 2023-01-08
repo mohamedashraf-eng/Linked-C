@@ -79,7 +79,7 @@
  *    @arg WXTRACE_LOG_STATE_ACTIVE
  *    @arg WXTRACE_LOG_STATE_INACTIVE
  */
-#define WXTRACE_LOG_STATE (WXTRACE_LOG_STATE_ACTIVE)
+#define WXTRACE_LOG_STATE (WXTRACE_LOG_STATE_INACTIVE)
 
 /*
  * ================================================================================================================================
@@ -155,7 +155,7 @@ void portal_test(void) {
 #endif
 
   en_ll_log_status test = LOG_INFO_OK;
-
+	
   register uint8 i = 0;
 
   ll_append_node(&myList, &name);
@@ -163,6 +163,7 @@ void portal_test(void) {
   ll_append_node(&myList, &name);
   ll_append_node(&myList, &name);
   ll_append_node(&myList, &name);
+  test = ll_insert_node_kth(myList, &name2, 2);
   test = ll_insert_node_kth(myList, &name2, 2);
 
   for (i = 0; myList != NULL;) {
@@ -424,14 +425,14 @@ _LOCAL_INLINE en_ll_log_status ll_push_node(
  * iterate till (iterator < kth-1)
  *         `node:n` `new_node` `node:n+1`
  * *				  +-+		 +-+			+-+
- * *	...			| | -> | | -> 	| | ... 
+ * *	...			| | -> | | -> 	| | ...
  * *				  +-+		 +-+			+-+
  * @note Other validations are defined.
- * 
- * @param pa_ll_head 
- * @param pa_ll_node_data 
- * @param a_ll_kth_node 
- * @return _LOCAL_INLINE 
+ *
+ * @param pa_ll_head
+ * @param pa_ll_node_data
+ * @param a_ll_kth_node
+ * @return _LOCAL_INLINE
  */
 _LOCAL_INLINE en_ll_log_status
 ll_insert_node_kth(lg_st_ll_ancestor_t *_CONST pa_ll_head,
@@ -461,12 +462,12 @@ ll_insert_node_kth(lg_st_ll_ancestor_t *_CONST pa_ll_head,
       } else {
         register uint64 l_list_iterator = 0;
         lg_st_ll_ancestor_t *lp_temp_to_head = pa_ll_head;
-        while ((l_list_iterator < a_ll_kth_node-1)) {
+        while ((l_list_iterator < (a_ll_kth_node - 1))) {
           lp_temp_to_head = lp_temp_to_head->next;
           ++l_list_iterator;
         }
         if ((NULL != lp_temp_to_head) && (NULL != lp_temp_to_head->next)) {
-          new_node->next = lp_temp_to_head->next->next;
+          new_node->next = lp_temp_to_head->next;
           lp_temp_to_head->next = new_node;
 #if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
           _wxtrace_log("new_node->next = %p", new_node->next);
