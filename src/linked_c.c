@@ -32,7 +32,7 @@
  *
  * @brief Simple debugging/logging function like macro to trace the code.
  */
-#if (DEBUGGING_FLAG == DEBUGGING_ACTIVE)
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_INACTIVE)
 /** @brief Function like macro used for debug messages
  * 	@attention
  * 		This function like macro is compatible starts from GCC-89/90
@@ -52,7 +52,7 @@
  * 	@attention
  * 		This function like macro is compatible starts from GCC-89/90
  */
-#if (DEBUGGING_FLAG == DEBUGGING_ACTIVE)
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_INACTIVE)
 #define exit_on_failure(_EXIT_CODE)                                            \
   ({                                                                           \
     _wxtrace_log("ASSERTION_FAILURE - EXIT_CODE=%d", (_EXIT_CODE));            \
@@ -119,6 +119,10 @@ _LOCAL_INLINE en_ll_log_status ll_append_node(
     lg_st_ll_ancestor_t **_CONST pa_ll_head, void *_CONST pa_ll_node_data);
 
 _FORCE_INLINE
+_LOCAL_INLINE en_ll_log_status ll_push_node(
+    lg_st_ll_ancestor_t **_CONST pa_ll_head, void *_CONST pa_ll_node_data);
+
+_FORCE_INLINE
 _LOCAL_INLINE en_ll_log_status ll_node_init(
     lg_st_ll_ancestor_t **_CONST pa_ll_node, void *_CONST pa_ll_node_data);
 
@@ -133,18 +137,22 @@ void portal_test(void) {
   lg_st_ll_ancestor_t *myList = NULL;
 
   char name[] = "Mohamed";
+	char name2[] = "Body";
 
 #if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
   _wxtrace_log("&name = %p", &name);
 #endif
 
-  en_ll_log_status test = ll_append_node(&myList, &name);
-  test = ll_append_node(&myList, &name);
-  test = ll_append_node(&myList, &name);
-  test = ll_append_node(&myList, &name);
+  en_ll_log_status test = LOG_INFO_OK;
 
-  uint8 i = 0;
-  for (; myList != NULL;) {
+  test = ll_append_node(&myList, &name);
+  test = ll_append_node(&myList, &name);
+  test = ll_append_node(&myList, &name);
+  test = ll_push_node(&myList, &name2);
+	test = ll_append_node(&myList, &name2);
+
+	register uint8 i = 0;
+  for (i = 0; myList != NULL;) {
     printf("%s\n", myList->data);
     myList = myList->next;
   }
@@ -235,7 +243,6 @@ _LOCAL_INLINE en_ll_log_status ll_append_node(
   _wxtrace_log("lp_temp_to_head = %p", lp_temp_to_head);
   _wxtrace_log("new_node = %p", new_node);
 #endif
-  /** @brief If the passed list is in its initial */
   if ((LOG_STATUS_OK == l_create_heap_function_status)) {
     en_ll_log_status l_node_init_function_status =
         ll_node_init(&new_node, pa_ll_node_data);
@@ -244,6 +251,7 @@ _LOCAL_INLINE en_ll_log_status ll_append_node(
     _wxtrace_log("new_node->data = %p", new_node->data);
 #endif
     if ((LOG_STATUS_OK == l_node_init_function_status)) {
+      /** @brief If the passed list is in its initial */
       if ((NULL == lp_temp_to_head)) {
         if ((NULL != pa_ll_node_data)) {
           *pa_ll_head = new_node;
@@ -266,6 +274,62 @@ _LOCAL_INLINE en_ll_log_status ll_append_node(
         _wxtrace_log("new_node->data = %p", new_node->data);
         _wxtrace_log("*pa_ll_head = %p", *pa_ll_head);
 #endif
+				l_this_function_log_status = LOG_STATUS_OK;
+      }
+    } else {
+      free(new_node);
+      l_this_function_log_status = l_node_init_function_status;
+    }
+  } else {
+    free(new_node);
+    l_this_function_log_status = l_create_heap_function_status;
+  }
+  return l_this_function_log_status;
+}
+
+_LOCAL_INLINE en_ll_log_status ll_push_node(
+    lg_st_ll_ancestor_t **_CONST pa_ll_head, void *_CONST pa_ll_node_data) {
+  en_ll_log_status l_this_function_log_status = LOG_STATUS_NOT_OK;
+  lg_st_ll_ancestor_t *lp_temp_to_head = *pa_ll_head;
+  lg_st_ll_ancestor_t *new_node = NULL;
+  en_ll_log_status l_create_heap_function_status = ll_create_heap(&new_node);
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+  _wxtrace_log("lp_temp_to_head = %p", lp_temp_to_head);
+  _wxtrace_log("new_node = %p", new_node);
+#endif
+  if ((LOG_STATUS_OK == l_create_heap_function_status)) {
+    en_ll_log_status l_node_init_function_status =
+        ll_node_init(&new_node, pa_ll_node_data);
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+    _wxtrace_log("new_node->next = %p", new_node->next);
+    _wxtrace_log("new_node->data = %p", new_node->data);
+#endif
+    if ((LOG_STATUS_OK == l_node_init_function_status)) {
+      /** @brief If the passed list is in its initial */
+      if ((NULL == lp_temp_to_head)) {
+        if ((NULL != pa_ll_node_data)) {
+          *pa_ll_head = new_node;
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+          _wxtrace_log("new_node->data = %p", new_node->data);
+          _wxtrace_log("*pa_ll_head = %p", *pa_ll_head);
+#endif
+          l_this_function_log_status = LOG_STATUS_OK;
+        } else {
+          free(new_node);
+          l_this_function_log_status = LOG_ERROR_NULL;
+        }
+        /** @brief If the passed list is already initalized */
+      } else {
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+        _wxtrace_log("current head = %p", lp_temp_top_head);
+#endif
+        new_node->next = lp_temp_to_head;
+        *pa_ll_head = new_node;
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+        _wxtrace_log("new_node->next = %p", new_node->next);
+        _wxtrace_log("*pa_ll_head = %p", *pa_ll_head);
+#endif
+				l_this_function_log_status = LOG_STATUS_OK;
       }
     } else {
       free(new_node);
