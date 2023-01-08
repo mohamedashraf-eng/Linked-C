@@ -100,6 +100,7 @@
 	#define LOCAL_INLINE STATIC INLINE
 	#define FORCE_INLINE __attribute__((always_inline))
 	#define FORCE_CONST __attribute__((const))
+	#define FORCE_PACKING(PAD_SIZE) __attribute__((packed))
 #endif /* _GNU_ARM_C_STM32F103_ */
 
 #endif /* __COMPILER_H__ */
