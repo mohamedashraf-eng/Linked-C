@@ -122,7 +122,8 @@ ll_append_node(lg_st_ll_ancestor_t ** _CONST pa_ll_head,
 
 _FORCE_INLINE
 _LOCAL_INLINE en_ll_log_status 
-ll_node_init(lg_st_ll_ancestor_t ** _CONST pa_ll_node, void * _CONST pa_ll_node_data); 
+ll_node_init(lg_st_ll_ancestor_t ** _CONST pa_ll_node, 
+             void * _CONST pa_ll_node_data); 
 
 /*
 * ================================================================================================================================
@@ -202,13 +203,32 @@ ll_create_heap(lg_st_ll_ancestor_t **pa_ll_node){
 
 /**
  * @brief Function to insert a node in front (appending).
+ * @note Simple iterator algorithm (to be modifed with front, rear).
+ * @details
+ * - passed reference to head
+ *    - head is NULL
+ *         |
+ * Create new node let the head point to it
+ *     `new_node`
+ *        +-+
+ * head-> | | ->NULL
+ *        +-+
+ *    - head isn't NULL
+ *        |
+ * Iterate through the passed reference to the list `head`
+ * untill the last element.
+ *      `node:1` `node:n` `new_node`
+ *        +-+     +-+     +-+
+ * head-> | | ... | | ->  | | ->NULL
+ *        +-+     +-+     +-+
+ * @note Other validations are defined. 
  * 
  * @param pa_ll_head 
  * @param pa_ll_node_data 
  * @return _LOCAL_INLINE 
  */
 _LOCAL_INLINE en_ll_log_status 
-ll_append_node(lg_st_ll_ancestor_t ** _CONST pa_ll_head,  void * _CONST pa_ll_node_data){
+ll_append_node(lg_st_ll_ancestor_t ** _CONST pa_ll_head, void * _CONST pa_ll_node_data){
   en_ll_log_status l_this_function_log_status = LOG_STATUS_NOT_OK;
   lg_st_ll_ancestor_t *lp_temp_to_head = *pa_ll_head;
   lg_st_ll_ancestor_t *new_node = NULL;
