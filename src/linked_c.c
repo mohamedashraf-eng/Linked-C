@@ -79,6 +79,7 @@ void portal_test(void){
   _st_ll_ancestor_t *myList = NULL;
 
   en_ll_log_status test = ll_create_heap(&myList);
+  
   if( (LOG_ERROR_INVALID_ALLOCATION == test) ){
     printf("\n Invalid heaping. ");
   }
@@ -97,6 +98,17 @@ void portal_test(void){
 /**
  * @brief Function to create & initialize a linked list's head,
  *        created in heap and return by pointer-pointer assign.
+ * 
+ * @details Explained..
+ *          main stack frame       ll_create_heap stack frame
+ *          +-+                    +-+
+ *          | | &passed_ptr   ->   | | *passed_ptr=new_head
+ *          +-+                    +-+
+ * =After function terminating (Context switched)
+ *          main stack frame   
+ *          +-+                
+ *          | | &passed_ptr=new_head
+ *          +-+                 
  * 
  * @param pa_ll_head 
  * @return LOCAL_INLINE 
