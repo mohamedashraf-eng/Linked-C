@@ -18,6 +18,7 @@ message(STATUS CXX_STANDARD: ${CMAKE_CXX_STANDARD})
 #########################################################
 ######### CMAKE PROJECT CONFIGURATIONS ##################
 #########################################################
+set(CMAKE_BUILD_TYPE Debug)
 # Set project name
 project(linked_C VERSION 0.0)
 # Set the source files 
