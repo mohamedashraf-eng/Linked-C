@@ -165,18 +165,18 @@ void portal_test(void){
  *        created in heap and return by pointer-pointer assign.
  * 
  * @details Explained.. 
- *          main stack frame       ll_create_heap stack frame
- *          +-+                    +-+ `Passed using double pointer`
- *          | | &passed_ptr   ->   | | passed_ptr=new_head
- *          +-+                    +-+
+ * *         main stack frame       ll_create_heap stack frame
+ * *         +-+                    +-+ `Passed using double pointer`
+ * *         | | &passed_ptr   ->   | | passed_ptr=new_head
+ * *         +-+                    +-+
  * =After function terminating (Context switched)
- *          main stack frame   
- *          +-+                
- *          | | passed_ptr=new_head
- *          +-+                 
+ * *         main stack frame   
+ * *         +-+                
+ * *         | | passed_ptr=new_head
+ * *         +-+                 
  * 
  * @param pa_ll_node  
- * @return _LOCAL_INLINE 
+ * @return en_ll_log_status 
  */
 _LOCAL_INLINE en_ll_log_status 
 ll_create_heap(lg_st_ll_ancestor_t **pa_ll_node){
@@ -226,7 +226,7 @@ ll_create_heap(lg_st_ll_ancestor_t **pa_ll_node){
  * 
  * @param pa_ll_head 
  * @param pa_ll_node_data 
- * @return _LOCAL_INLINE 
+ * @return en_ll_log_status 
  */
 _LOCAL_INLINE en_ll_log_status 
 ll_append_node(lg_st_ll_ancestor_t ** _CONST pa_ll_head, void * _CONST pa_ll_node_data){
@@ -280,6 +280,13 @@ ll_append_node(lg_st_ll_ancestor_t ** _CONST pa_ll_head, void * _CONST pa_ll_nod
   return l_this_function_log_status;  
 }
 
+/**
+ * @brief Function to initalize a node.
+ * 
+ * @param pa_ll_node 
+ * @param pa_ll_node_data 
+ * @return _LOCAL_INLINE 
+ */
 _LOCAL_INLINE en_ll_log_status 
 ll_node_init(lg_st_ll_ancestor_t ** _CONST pa_ll_node, void * _CONST pa_ll_node_data){
   en_ll_log_status l_this_function_log_status = LOG_STATUS_NOT_OK;
