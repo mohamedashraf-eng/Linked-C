@@ -57,18 +57,6 @@ extern "C" {
  * ================================================================================================================================
  **/
 
-/**
- * @defgroup Logging/Debugging Macros
- *
- * @brief Simple debugging/logging function like macro to trace the code.
- *
- */
-/**
- * @def Configuration Parameters
- *    @arg WXTRACE_LOG_STATE_ACTIVE
- *    @arg WXTRACE_LOG_STATE_INACTIVE
- */
-#define WXTRACE_LOG_STATE (WXTRACE_LOG_STATE_INACTIVE)
 
 /*
  * ================================================================================================================================
@@ -91,7 +79,8 @@ typedef enum ll_logStatus {
 
   LOG_STATUS_OK,
   LOG_STATUS_NOT_OK,
-  LOG_STATUS_INVALID_ARGUMENT
+  LOG_STATUS_INVALID_ARGUMENT,
+  LOG_STATUS_INVALID_KTH
 } en_ll_log_status;
 
 /*
