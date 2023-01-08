@@ -33,10 +33,12 @@
  * @brief linked list main building block;
  *        used for inhertiance.
 */
-typedef struct linkedlist_ancestor{
+struct linkedlist_ancestor{
   void *data;
   struct linkedlist_ancestor *next;
-}_st_ll_ancestor_t;
+}; 
+/** @brief Usability typedef */
+typedef struct linkedlist_ancestor _st_ll_ancestor_t;
 
 /*
 * ================================================================================================================================
