@@ -204,23 +204,24 @@ ll_create_heap(lg_st_ll_ancestor_t **pa_ll_node){
 /**
  * @brief Function to insert a node in front (appending).
  * @note Simple iterator algorithm (to be modifed with front, rear).
- * @details
+ * 
+ * @details Explained.. 
  * - passed reference to head
- *    - head is NULL
+ *    * head is NULL
  *         |
  * Create new node let the head point to it
  *     `new_node`
- *        +-+
- * head-> | | ->NULL
- *        +-+
- *    - head isn't NULL
+ * *        +-+
+ * * head-> | | ->NULL
+ * *        +-+
+ *    * head isn't NULL
  *        |
  * Iterate through the passed reference to the list `head`
  * untill the last element.
  *      `node:1` `node:n` `new_node`
- *        +-+     +-+     +-+
- * head-> | | ... | | ->  | | ->NULL
- *        +-+     +-+     +-+
+ * *        +-+     +-+     +-+
+ * * head-> | | ... | | ->  | | ->NULL
+ * *        +-+     +-+     +-+
  * @note Other validations are defined. 
  * 
  * @param pa_ll_head 
