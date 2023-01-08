@@ -57,6 +57,19 @@ extern "C" {
 * ================================================================================================================================
 **/
 
+/**
+ * @defgroup Logging/Debugging Macros
+ * 
+ * @brief Simple debugging/logging function like macro to trace the code.
+ * 
+ */
+/**
+ * @def Configuration Parameters
+ *    @arg WXTRACE_LOG_STATE_ACTIVE
+ *    @arg WXTRACE_LOG_STATE_INACTIVE
+*/
+#define WXTRACE_LOG_STATE   (WXTRACE_LOG_STATE_INACTIVE)
+
 /*
 * ================================================================================================================================
 * -> Public Structs
@@ -78,7 +91,8 @@ typedef enum ll_logStatus{
   LOG_ERROR_NULL,
 
   LOG_STATUS_OK,
-  LOG_STATUS_NOT_OK
+  LOG_STATUS_NOT_OK,
+  LOG_STATUS_INVALID_ARGUMENT
 }en_ll_log_status;
 
 /*
@@ -93,6 +107,7 @@ typedef enum ll_logStatus{
 * ================================================================================================================================
 **/
 
+/** @brief temporary testing function `the portal` */
 void portal_test(void);
 
 
