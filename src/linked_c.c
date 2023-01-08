@@ -74,6 +74,12 @@
  */
 #define WXTRACE_LOG_STATE_INACTIVE (0)
 #define WXTRACE_LOG_STATE_ACTIVE (1)
+/**
+ * @def Configuration Parameters
+ *    @arg WXTRACE_LOG_STATE_ACTIVE
+ *    @arg WXTRACE_LOG_STATE_INACTIVE
+ */
+#define WXTRACE_LOG_STATE (WXTRACE_LOG_STATE_ACTIVE)
 
 /*
  * ================================================================================================================================
@@ -123,6 +129,11 @@ _LOCAL_INLINE en_ll_log_status ll_push_node(
     lg_st_ll_ancestor_t **_CONST pa_ll_head, void *_CONST pa_ll_node_data);
 
 _FORCE_INLINE
+_LOCAL_INLINE en_ll_log_status
+ll_insert_node_kth(lg_st_ll_ancestor_t *_CONST pa_ll_head,
+                   void *_CONST pa_ll_node_data, _CONST uint64 a_ll_kth_node);
+
+_FORCE_INLINE
 _LOCAL_INLINE en_ll_log_status ll_node_init(
     lg_st_ll_ancestor_t **_CONST pa_ll_node, void *_CONST pa_ll_node_data);
 
@@ -137,7 +148,7 @@ void portal_test(void) {
   lg_st_ll_ancestor_t *myList = NULL;
 
   char name[] = "Mohamed";
-	char name2[] = "Body";
+  char name2[] = "Body";
 
 #if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
   _wxtrace_log("&name = %p", &name);
@@ -145,13 +156,15 @@ void portal_test(void) {
 
   en_ll_log_status test = LOG_INFO_OK;
 
-  test = ll_append_node(&myList, &name);
-  test = ll_append_node(&myList, &name);
-  test = ll_append_node(&myList, &name);
-  test = ll_push_node(&myList, &name2);
-	test = ll_append_node(&myList, &name2);
+  register uint8 i = 0;
 
-	register uint8 i = 0;
+  ll_append_node(&myList, &name);
+  ll_append_node(&myList, &name);
+  ll_append_node(&myList, &name);
+  ll_append_node(&myList, &name);
+  ll_append_node(&myList, &name);
+  test = ll_insert_node_kth(myList, &name2, 2);
+
   for (i = 0; myList != NULL;) {
     printf("%s\n", myList->data);
     myList = myList->next;
@@ -203,6 +216,9 @@ ll_create_heap(lg_st_ll_ancestor_t **pa_ll_node) {
       l_this_function_log_status = LOG_STATUS_OK;
     }
   }
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+  _wxtrace_log("l_this_function_log_status: %d", l_this_function_log_status);
+#endif
   return l_this_function_log_status;
 }
 
@@ -263,6 +279,9 @@ _LOCAL_INLINE en_ll_log_status ll_append_node(
         } else {
           free(new_node);
           l_this_function_log_status = LOG_ERROR_NULL;
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+          _wxtrace_log(" ");
+#endif
         }
         /** @brief If the passed list is already initalized */
       } else {
@@ -274,16 +293,25 @@ _LOCAL_INLINE en_ll_log_status ll_append_node(
         _wxtrace_log("new_node->data = %p", new_node->data);
         _wxtrace_log("*pa_ll_head = %p", *pa_ll_head);
 #endif
-				l_this_function_log_status = LOG_STATUS_OK;
+        l_this_function_log_status = LOG_STATUS_OK;
       }
     } else {
       free(new_node);
       l_this_function_log_status = l_node_init_function_status;
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+      _wxtrace_log(" ");
+#endif
     }
   } else {
     free(new_node);
     l_this_function_log_status = l_create_heap_function_status;
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+    _wxtrace_log(" ");
+#endif
   }
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+  _wxtrace_log("l_this_function_log_status: %d", l_this_function_log_status);
+#endif
   return l_this_function_log_status;
 }
 
@@ -305,9 +333,9 @@ _LOCAL_INLINE en_ll_log_status ll_append_node(
  * Let the next of the new node assigned with the head,
  * let the head assigned with the new node.
  *       `new_node` `node:2` `node:n`
- * *         +-+       +-+     +-+   
+ * *         +-+       +-+     +-+
  * * head->  | | ->	   | | ... | | -> NULL
- * *         +-+       +-+     +-+   
+ * *         +-+       +-+     +-+
  * @note Other validations are defined.
  *
  * @param pa_ll_head
@@ -344,11 +372,14 @@ _LOCAL_INLINE en_ll_log_status ll_push_node(
         } else {
           free(new_node);
           l_this_function_log_status = LOG_ERROR_NULL;
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+          _wxtrace_log(" ");
+#endif
         }
         /** @brief If the passed list is already initalized */
       } else {
 #if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
-        _wxtrace_log("current head = %p", lp_temp_top_head);
+        _wxtrace_log("current head = %p", lp_temp_to_head);
 #endif
         new_node->next = lp_temp_to_head;
         *pa_ll_head = new_node;
@@ -356,16 +387,113 @@ _LOCAL_INLINE en_ll_log_status ll_push_node(
         _wxtrace_log("new_node->next = %p", new_node->next);
         _wxtrace_log("*pa_ll_head = %p", *pa_ll_head);
 #endif
-				l_this_function_log_status = LOG_STATUS_OK;
+        l_this_function_log_status = LOG_STATUS_OK;
       }
     } else {
       free(new_node);
       l_this_function_log_status = l_node_init_function_status;
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+      _wxtrace_log(" ");
+#endif
+    }
+  } else {
+    free(new_node);
+    l_this_function_log_status = l_create_heap_function_status;
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+    _wxtrace_log(" ");
+#endif
+  }
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+  _wxtrace_log("l_this_function_log_status: %d", l_this_function_log_status);
+#endif
+  return l_this_function_log_status;
+}
+
+/**
+ * @brief Function to insert a node in kth node.
+ * @note Simple iterator algorithm (to be modifed with front, rear).
+ *
+ * @details Explained..
+ * - passed reference to head
+ *    * head is not equal to NULL
+ *         |
+ * Create new node.
+ * Iterate `kth` number through the passed list.
+ *		* if node exists and there is available slot to the new node.
+ * 						|
+ * iterate till (iterator < kth-1)
+ *         `node:n` `new_node` `node:n+1`
+ * *				  +-+		 +-+			+-+
+ * *	...			| | -> | | -> 	| | ... 
+ * *				  +-+		 +-+			+-+
+ * @note Other validations are defined.
+ * 
+ * @param pa_ll_head 
+ * @param pa_ll_node_data 
+ * @param a_ll_kth_node 
+ * @return _LOCAL_INLINE 
+ */
+_LOCAL_INLINE en_ll_log_status
+ll_insert_node_kth(lg_st_ll_ancestor_t *_CONST pa_ll_head,
+                   void *_CONST pa_ll_node_data, _CONST uint64 a_ll_kth_node) {
+  en_ll_log_status l_this_function_log_status = LOG_STATUS_NOT_OK;
+  lg_st_ll_ancestor_t *new_node = NULL;
+  en_ll_log_status l_create_heap_function_status = ll_create_heap(&new_node);
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+  _wxtrace_log("pa_ll_head = %p", pa_ll_head);
+  _wxtrace_log("new_node = %p", new_node);
+#endif
+  if ((LOG_STATUS_OK == l_create_heap_function_status)) {
+    en_ll_log_status l_node_init_function_status =
+        ll_node_init(&new_node, pa_ll_node_data);
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+    _wxtrace_log("new_node->next = %p", new_node->next);
+    _wxtrace_log("new_node->data = %p", new_node->data);
+#endif
+    if ((LOG_STATUS_OK == l_node_init_function_status)) {
+      /** @brief If the passed list is in its initial */
+      if ((NULL == pa_ll_head)) {
+        l_this_function_log_status = LOG_STATUS_INVALID_KTH;
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+        _wxtrace_log(" ");
+#endif
+        /** @brief If the passed list is already initalized */
+      } else {
+        register uint64 l_list_iterator = 0;
+        lg_st_ll_ancestor_t *lp_temp_to_head = pa_ll_head;
+        while ((l_list_iterator < a_ll_kth_node-1)) {
+          lp_temp_to_head = lp_temp_to_head->next;
+          ++l_list_iterator;
+        }
+        if ((NULL != lp_temp_to_head) && (NULL != lp_temp_to_head->next)) {
+          new_node->next = lp_temp_to_head->next->next;
+          lp_temp_to_head->next = new_node;
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+          _wxtrace_log("new_node->next = %p", new_node->next);
+          _wxtrace_log("lp_temp_to_head->next = %p", lp_temp_to_head->next);
+#endif
+          l_this_function_log_status = LOG_STATUS_OK;
+        } else {
+          l_this_function_log_status = LOG_STATUS_INVALID_KTH;
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+          _wxtrace_log(" ");
+#endif
+        }
+      }
+    } else {
+      free(new_node);
+      l_this_function_log_status = l_node_init_function_status;
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+      _wxtrace_log(" ");
+#endif
     }
   } else {
     free(new_node);
     l_this_function_log_status = l_create_heap_function_status;
   }
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+  _wxtrace_log("l_this_function_log_status: %d", l_this_function_log_status);
+#endif
   return l_this_function_log_status;
 }
 
@@ -389,10 +517,16 @@ _LOCAL_INLINE en_ll_log_status ll_node_init(
     l_this_function_log_status = LOG_STATUS_OK;
   } else {
     l_this_function_log_status = LOG_STATUS_INVALID_ARGUMENT;
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+    _wxtrace_log(" ");
+#endif
   }
 #if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
   _wxtrace_log("lp_temp_ptr_to_node->next = %p", lp_temp_ptr_to_node->next);
   _wxtrace_log("lp_temp_ptr_to_node->data = %p", lp_temp_ptr_to_node->data);
+#endif
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+  _wxtrace_log("l_this_function_log_status: %d", l_this_function_log_status);
 #endif
   return l_this_function_log_status;
 }
