@@ -10,16 +10,18 @@
  */
 
 /** @defgroup Included headers */
-//#include ""
+#include <stdio.h>
+#include "linked_c.h"
 
 
 
 int main(void)
 {
-  
+
+  portal_test();
 
 
-
+  printf("\n");
   while(1) {;}
 
   return 0;
