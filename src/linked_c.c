@@ -79,7 +79,7 @@
  *    @arg WXTRACE_LOG_STATE_ACTIVE
  *    @arg WXTRACE_LOG_STATE_INACTIVE
  */
-#define WXTRACE_LOG_STATE (WXTRACE_LOG_STATE_ACTIVE)
+#define WXTRACE_LOG_STATE (WXTRACE_LOG_STATE_INACTIVE)
 
 /*
  * ================================================================================================================================
@@ -175,9 +175,9 @@ void portal_test(void) {
   test = ll_append_node(&myList, &name);
   test = ll_append_node(&myList, &name);
   test = ll_append_node(&myList, &name);
+  test = ll_insert_node_kth(myList, &name2, 1);
   test = ll_insert_node_kth(myList, &name2, 2);
-  test = ll_insert_node_kth(myList, &name2, 2);
-  test = ll_remove_node_end(myList);
+  // test = ll_remove_node_end(myList);
   test = ll_remove_node_begin(&myList);
 
   for (i = 0; myList != NULL;) {
@@ -467,7 +467,7 @@ ll_insert_node_kth(lg_st_ll_ancestor_t *_CONST pa_ll_head,
 #endif
     if ((LOG_STATUS_OK == l_node_init_function_status)) {
       /** @brief If the passed list is in its initial */
-      if ((NULL == pa_ll_head)) {
+      if ((NULL == pa_ll_head) || (a_ll_kth_node <= 0)) {
         l_this_function_log_status = LOG_STATUS_INVALID_KTH;
 #if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
         _wxtrace_log(" ");
@@ -572,18 +572,19 @@ ll_remove_node_begin(lg_st_ll_ancestor_t **pa_ll_head) {
 #endif
   if ((NULL != (*pa_ll_head))) {
     lg_st_ll_ancestor_t *lp_temp_to_head = *pa_ll_head;
-    if ((NULL != lp_temp_to_head->next->next)) {
-      *pa_ll_head = lp_temp_to_head->next->next;
+    if ((NULL != lp_temp_to_head->next)) {
+      *pa_ll_head = lp_temp_to_head->next;
 #if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
       _wxtrace_log("*pa_ll_head=%p", (*pa_ll_head));
 #endif
+      free(lp_temp_to_head);
       l_this_function_log_status = LOG_STATUS_OK;
     } else {
       *pa_ll_head = NULL;
-      free(lp_temp_to_head);
 #if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
       _wxtrace_log("*pa_ll_head=%p", (*pa_ll_head));
 #endif
+      free(lp_temp_to_head);
       l_this_function_log_status = LOG_STATUS_OK;
     }
 #if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
