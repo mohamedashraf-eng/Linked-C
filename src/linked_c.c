@@ -79,7 +79,7 @@
  *    @arg WXTRACE_LOG_STATE_ACTIVE
  *    @arg WXTRACE_LOG_STATE_INACTIVE
  */
-#define WXTRACE_LOG_STATE (WXTRACE_LOG_STATE_INACTIVE)
+#define WXTRACE_LOG_STATE (WXTRACE_LOG_STATE_ACTIVE)
 
 /*
  * ================================================================================================================================
@@ -134,6 +134,18 @@ ll_insert_node_kth(lg_st_ll_ancestor_t *_CONST pa_ll_head,
                    void *_CONST pa_ll_node_data, _CONST uint64 a_ll_kth_node);
 
 _FORCE_INLINE
+_LOCAL_INLINE en_ll_log_status ll_remove_node_kth(
+    lg_st_ll_ancestor_t *_CONST pa_ll_head, _CONST uint64 a_ll_kth_node);
+
+_FORCE_INLINE
+_LOCAL_INLINE en_ll_log_status
+ll_remove_node_end(lg_st_ll_ancestor_t *pa_ll_head);
+
+_FORCE_INLINE
+_LOCAL_INLINE en_ll_log_status
+ll_remove_node_begin(lg_st_ll_ancestor_t *pa_ll_head);
+
+_FORCE_INLINE
 _LOCAL_INLINE en_ll_log_status ll_node_init(
     lg_st_ll_ancestor_t **_CONST pa_ll_node, void *_CONST pa_ll_node_data);
 
@@ -155,16 +167,18 @@ void portal_test(void) {
 #endif
 
   en_ll_log_status test = LOG_INFO_OK;
-	
+
   register uint8 i = 0;
 
-  ll_append_node(&myList, &name);
-  ll_append_node(&myList, &name);
-  ll_append_node(&myList, &name);
-  ll_append_node(&myList, &name);
-  ll_append_node(&myList, &name);
+  test = ll_append_node(&myList, &name);
+  test = ll_append_node(&myList, &name);
+  test = ll_append_node(&myList, &name);
+  test = ll_append_node(&myList, &name);
+  test = ll_append_node(&myList, &name);
   test = ll_insert_node_kth(myList, &name2, 2);
   test = ll_insert_node_kth(myList, &name2, 2);
+  test = ll_remove_node_end(myList);
+  test = ll_remove_node_begin(myList);
 
   for (i = 0; myList != NULL;) {
     printf("%s\n", myList->data);
@@ -496,6 +510,65 @@ ll_insert_node_kth(lg_st_ll_ancestor_t *_CONST pa_ll_head,
   _wxtrace_log("l_this_function_log_status: %d", l_this_function_log_status);
 #endif
   return l_this_function_log_status;
+}
+
+/**
+ * @brief Function to remove a node at end of a list.
+ *
+ * @details Explained..
+ *
+ *
+ * @param pa_ll_head
+ * @return en_ll_log_status
+ */
+_FORCE_INLINE
+_LOCAL_INLINE en_ll_log_status
+ll_remove_node_end(lg_st_ll_ancestor_t *pa_ll_head) {
+  en_ll_log_status l_this_function_log_status = LOG_STATUS_NOT_OK;
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+  _wxtrace_log("pa_ll_head: %p", pa_ll_head);
+#endif
+  if ((NULL != pa_ll_head)) {
+    lg_st_ll_ancestor_t *lp_temp_to_head = pa_ll_head;
+    while ((NULL != pa_ll_head->next)) {
+      pa_ll_head = pa_ll_head->next;
+    }
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+    _wxtrace_log("pa_ll_head=%p", pa_ll_head);
+#endif
+    while ((NULL != lp_temp_to_head->next->next)) {
+      lp_temp_to_head = lp_temp_to_head->next;
+    }
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+    _wxtrace_log("lp_temp_to_head=%p", lp_temp_to_head);
+#endif
+    lp_temp_to_head->next = NULL;
+    free(pa_ll_head);
+    l_this_function_log_status = LOG_STATUS_OK;
+  } else {
+    l_this_function_log_status = LOG_ERROR_NULL;
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+    _wxtrace_log("Empty List");
+#endif
+  }
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+  _wxtrace_log("l_this_function_log_status: %d", l_this_function_log_status);
+#endif
+  return l_this_function_log_status;
+}
+
+_FORCE_INLINE
+_LOCAL_INLINE en_ll_log_status
+ll_remove_node_begin(lg_st_ll_ancestor_t *_CONST pa_ll_head) {
+
+  /** @todo */
+}
+
+_FORCE_INLINE
+_LOCAL_INLINE en_ll_log_status ll_remove_node_kth(
+    lg_st_ll_ancestor_t *_CONST pa_ll_head, _CONST uint64 a_ll_kth_node) {
+
+  /** @todo */
 }
 
 /**
