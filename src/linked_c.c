@@ -179,6 +179,7 @@ void portal_test(void) {
   test = ll_insert_node_kth(myList, &name2, 2);
   // test = ll_remove_node_end(myList);
   test = ll_remove_node_begin(&myList);
+  test = ll_remove_node_kth(myList, 1);
 
   for (i = 0; myList != NULL;) {
     printf("%s\n", myList->data);
@@ -521,7 +522,6 @@ ll_insert_node_kth(lg_st_ll_ancestor_t *_CONST pa_ll_head,
  * @param pa_ll_head
  * @return en_ll_log_status
  */
-_FORCE_INLINE
 _LOCAL_INLINE en_ll_log_status
 ll_remove_node_end(lg_st_ll_ancestor_t *pa_ll_head) {
   en_ll_log_status l_this_function_log_status = LOG_STATUS_NOT_OK;
@@ -602,11 +602,66 @@ ll_remove_node_begin(lg_st_ll_ancestor_t **pa_ll_head) {
   return l_this_function_log_status;
 }
 
-_FORCE_INLINE
+/**
+ * @brief Function to remove node at kth.
+ *
+ * @param pa_ll_head
+ * @param a_ll_kth_node
+ * @return lg_st_ll_ancestor_t
+ */
 _LOCAL_INLINE en_ll_log_status ll_remove_node_kth(
     lg_st_ll_ancestor_t *pa_ll_head, _CONST uint64 a_ll_kth_node) {
-
-  /** @todo */
+  en_ll_log_status l_this_function_log_status = LOG_STATUS_NOT_OK;
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+  _wxtrace_log("*pa_ll_head: %p", pa_ll_head);
+#endif
+  if ((a_ll_kth_node <= 0) || (a_ll_kth_node > 0xFFFFFFFFFFFFFFFFUL)) {
+    l_this_function_log_status = LOG_STATUS_INVALID_KTH;
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+    _wxtrace_log(" ");
+#endif
+  } else {
+    if ((1 > a_ll_kth_node)) {
+      ll_remove_node_begin(&pa_ll_head);
+      l_this_function_log_status = LOG_STATUS_OK;
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+      _wxtrace_log(" ");
+#endif
+    } else {
+      lg_st_ll_ancestor_t *l_node_before_kth = pa_ll_head;
+      uint64 register l_list_iterator = 0;
+      while ((l_list_iterator < a_ll_kth_node)) {
+        pa_ll_head = pa_ll_head->next;
+        if ((NULL == pa_ll_head)) {
+          break;
+        } else {
+          ++l_list_iterator;
+        }
+      }
+      if ((NULL != pa_ll_head)) {
+        l_list_iterator = 0;
+        while ((l_list_iterator < (a_ll_kth_node - 1))) {
+          l_node_before_kth = l_node_before_kth->next;
+          ++l_list_iterator;
+        }
+        l_node_before_kth->next = pa_ll_head->next;
+        free(pa_ll_head);
+        l_this_function_log_status = LOG_STATUS_OK;
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+        _wxtrace_log(" ");
+#endif
+      } else {
+        l_this_function_log_status = LOG_ERROR_NULL;
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+        _wxtrace_log(" ");
+#endif
+      }
+    }
+  }
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+  _wxtrace_log("l_this_function_log_status: %d", l_this_function_log_status);
+#endif
+  return l_this_function_log_status;
 }
 
 /**
