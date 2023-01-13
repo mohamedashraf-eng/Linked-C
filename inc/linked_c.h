@@ -57,6 +57,16 @@ extern "C" {
  * ================================================================================================================================
  **/
 
+/**
+ * @brief Detailed user interface flag
+ * @details The detailed user interface option is used to display all
+ *          hidden data in the backend.
+ *
+ * @defgroup Configuration Parameters
+ *    @arg DUI_INACTIVE
+ *    @arg DUI_ACTIVE
+ */
+#define DETAILED_USER_INTERFACE (DUI_ACTIVE)
 
 /*
  * ================================================================================================================================
@@ -64,30 +74,27 @@ extern "C" {
  * ================================================================================================================================
  **/
 
+typedef struct _sll_struct *sll_class;
+
 /*
  * ================================================================================================================================
  * -> Public Enums
  * ================================================================================================================================
  **/
 
-typedef enum ll_logStatus {
-  LOG_INFO_OK,
-  LOG_INFO_NOT_OK,
-
-  LOG_ERROR_INVALID_ALLOCATION,
-  LOG_ERROR_NULL,
-
-  LOG_STATUS_OK,
-  LOG_STATUS_NOT_OK,
-  LOG_STATUS_INVALID_ARGUMENT,
-  LOG_STATUS_INVALID_KTH
-} en_ll_log_status;
-
 /*
  * ================================================================================================================================
  * -> Public Datatypes
  * ================================================================================================================================
  **/
+
+typedef enum ll_status {
+  InstanceCreateSucc = 0,
+  InstanceCreateFail,
+  InsertionSucc,
+  InsertionFail,
+  OK
+} en_ll_user_status;
 
 /*
  * ================================================================================================================================
@@ -97,6 +104,9 @@ typedef enum ll_logStatus {
 
 /** @brief temporary testing function `the portal` */
 void portal_test(void);
+
+sll_class sll_getInstance(en_ll_user_status *a_log_status);
+void sll_append(sll_class mySllInstance, void *myData);
 
 /** @def C++ Guards */
 #ifdef __cplusplus

@@ -81,6 +81,33 @@
  */
 #define WXTRACE_LOG_STATE (WXTRACE_LOG_STATE_INACTIVE)
 
+/** @brief Configuration parameters for DUI option. */
+#define DUI_INACTIVE (0)
+#define DUI_ACTIVE (1)
+
+/*
+ * ================================================================================================================================
+ * -> Private Enums
+ * ================================================================================================================================
+ **/
+
+/**
+ * @brief Private enum to store the private log status.
+ *
+ */
+typedef enum ll_logStatus {
+  LOG_INFO_OK,
+  LOG_INFO_NOT_OK,
+
+  LOG_ERROR_INVALID_ALLOCATION,
+  LOG_ERROR_NULL,
+
+  LOG_STATUS_OK,
+  LOG_STATUS_NOT_OK,
+  LOG_STATUS_INVALID_ARGUMENT,
+  LOG_STATUS_INVALID_KTH
+} en_ll_log_status;
+
 /*
  * ================================================================================================================================
  * -> Private Structs
@@ -91,19 +118,40 @@
  * @brief linked list main building block;
  *        used for inhertiance.
  */
-_FORCE_PACKING(0)
 struct linkedlist_ancestor {
+  /* Struct data types */
   struct linkedlist_ancestor *next;
   void *data;
-};
+} _FORCE_PACKING(0);
 /** @brief Usability typedef */
 typedef struct linkedlist_ancestor lg_st_ll_ancestor_t;
 
-/*
- * ================================================================================================================================
- * -> Private Enums
- * ================================================================================================================================
- **/
+/**
+ * @brief linked list struct class.
+ *
+ */
+struct _sll_functions {
+  /* Class methods */
+  /* Inserting */
+  en_ll_log_status (*push)(struct linkedlist_ancestor **pa_ll_head,
+                           void *_CONST pa_ll_node_data);
+
+  en_ll_log_status (*append)(struct linkedlist_ancestor **pa_ll_head,
+                             void *_CONST pa_ll_node_data);
+
+  en_ll_log_status (*insert_kth)(struct linkedlist_ancestor *pa_ll_head,
+                                 void *_CONST pa_ll_node_data,
+                                 _CONST uint64 a_ll_kth_node);
+  /* Removing */
+  en_ll_log_status (*remove_at_begin)(struct linkedlist_ancestor **pa_ll_head);
+  en_ll_log_status (*remove_at_end)(struct linkedlist_ancestor *pa_ll_head);
+  en_ll_log_status (*remove_at_kth)(struct linkedlist_ancestor *pa_ll_head,
+                                    _CONST uint64 a_ll_kth_node);
+};
+struct _sll_struct {
+  struct _sll_functions functions;
+  lg_st_ll_ancestor_t *sll_head;
+} _FORCE_PACKING(0) _sll_struct;
 
 /*
  * ================================================================================================================================
@@ -117,8 +165,8 @@ typedef struct linkedlist_ancestor lg_st_ll_ancestor_t;
  * ================================================================================================================================
  **/
 
-_FORCE_INLINE
-_LOCAL_INLINE en_ll_log_status ll_create_heap(lg_st_ll_ancestor_t **pa_ll_node);
+_FORCE_INLINE _LOCAL_INLINE en_ll_log_status
+ll_create_heap(lg_st_ll_ancestor_t **pa_ll_node);
 
 _FORCE_INLINE
 _LOCAL_INLINE en_ll_log_status ll_append_node(
@@ -185,6 +233,83 @@ void portal_test(void) {
     printf("%s\n", myList->data);
     myList = myList->next;
   }
+}
+
+/**
+ * @brief the constructor functio for the sll class.
+ *
+ * @param a_log_status
+ * @return void*
+ */
+sll_class sll_getInstance(en_ll_user_status *a_log_status) {
+  en_ll_user_status l_this_function_log_status = OK;
+  en_ll_log_status l_create_heap_function_log_status = LOG_STATUS_NOT_OK;
+
+  struct _sll_struct *new_sll_class =
+      (struct _sll_struct *)malloc(sizeof(_sll_struct));
+
+  new_sll_class->sll_head = NULL;
+
+  l_create_heap_function_log_status = ll_create_heap(&new_sll_class->sll_head);
+
+  if ((LOG_STATUS_OK == l_create_heap_function_log_status)) {
+    /* Init all methods & datatypes */
+    new_sll_class->functions.append = &ll_append_node;
+    new_sll_class->functions.push = &ll_push_node;
+    new_sll_class->functions.insert_kth = &ll_insert_node_kth;
+    new_sll_class->functions.remove_at_begin = &ll_remove_node_begin;
+    new_sll_class->functions.remove_at_end = &ll_remove_node_end;
+    new_sll_class->functions.remove_at_kth = &ll_remove_node_kth;
+    // new_sll_class->functions.terminate         = NULL ;
+    /** @todo */
+    l_this_function_log_status = InstanceCreateSucc;
+  } else {
+    l_this_function_log_status = InstanceCreateFail;
+  }
+  *a_log_status = l_this_function_log_status;
+
+#if (DUI_ACTIVE == DETAILED_USER_INTERFACE)
+  switch ((*a_log_status)) {
+  case InstanceCreateSucc:
+    printf("\n Created `singly linked list instance` succesfully. \n");
+    break;
+  case InstanceCreateFail:
+    printf("\n Failed to create `singly linked list instance`. \n");
+    break;
+  default:
+    break;
+  }
+#endif
+  return new_sll_class;
+}
+
+void sll_append(sll_class mySllInstance, void *myData) {
+  en_ll_user_status l_this_function_log_status = OK;
+  en_ll_log_status l_append_function_log_status = LOG_STATUS_NOT_OK;
+
+  l_append_function_log_status =
+      mySllInstance->functions.append(&mySllInstance->sll_head, myData);
+
+  if ((LOG_STATUS_OK == l_append_function_log_status)) {
+    l_this_function_log_status = InsertionSucc;
+  } else {
+    l_this_function_log_status = InsertionFail;
+  }
+
+#if (DUI_ACTIVE == DETAILED_USER_INTERFACE)
+  switch (l_this_function_log_status) {
+  case InsertionSucc:
+    printf("\n Insertion done succesfully. \n");
+    break;
+  case InsertionFail:
+    printf("\n Insertion Failed. \n");
+    break;
+  default:
+    break;
+  }
+#endif
+
+  return;
 }
 
 /*
@@ -629,7 +754,7 @@ _LOCAL_INLINE en_ll_log_status ll_remove_node_kth(
 #endif
     } else {
       lg_st_ll_ancestor_t *l_node_before_kth = pa_ll_head;
-      uint64 register l_list_iterator = 0;
+      register uint64 l_list_iterator = 0;
       while ((l_list_iterator < a_ll_kth_node)) {
         pa_ll_head = pa_ll_head->next;
         if ((NULL == pa_ll_head)) {
