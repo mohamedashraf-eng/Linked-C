@@ -106,7 +106,7 @@ typedef enum ll_status {
 void portal_test(void);
 
 sll_class sll_getInstance(en_ll_user_status *a_log_status);
-void sll_append(sll_class mySllInstance, void *myData);
+en_ll_user_status sll_append(sll_class mySllInstance, void *myData);
 
 /** @def C++ Guards */
 #ifdef __cplusplus

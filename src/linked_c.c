@@ -283,7 +283,13 @@ sll_class sll_getInstance(en_ll_user_status *a_log_status) {
   return new_sll_class;
 }
 
-void sll_append(sll_class mySllInstance, void *myData) {
+/**
+ * @brief Function to append to sll.
+ *
+ * @param mySllInstance
+ * @param myData
+ */
+en_ll_user_status sll_append(sll_class mySllInstance, void *myData) {
   en_ll_user_status l_this_function_log_status = OK;
   en_ll_log_status l_append_function_log_status = LOG_STATUS_NOT_OK;
 
@@ -308,8 +314,7 @@ void sll_append(sll_class mySllInstance, void *myData) {
     break;
   }
 #endif
-
-  return;
+  return l_this_function_log_status;
 }
 
 /*
