@@ -65,7 +65,7 @@ int main(void){
 }
 ```
 To turn on the `Detailed User Interface (DUI)` option.  
-Set the macro `DETAILED_USER_INTERFACE` to `DUI_ACTIVE`
+Set the macro `DETAILED_USER_INTERFACE` to `DUI_ACTIVE` in `linked_c.h`
 ```c
 /**
  * @brief Detailed user interface flag
