@@ -20,6 +20,7 @@ If already installed then:
 3. Then write
 ```c
 mkdir datastructures_library
+cd ./datastructures_library/
 git clone https://github.com/mohamedashraf-eng/Linked-C.git
 ```
 4. Create a directory with name `build`
