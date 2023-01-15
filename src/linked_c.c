@@ -21,6 +21,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/**
+ * @todo
+ * 1. Solve the encapsulation problem
+ * 2. Think about the push function as generic usage.
+ *    For example if I want to push on front, top; I can save reference to any
+ *    of them then push at this node address.
+ *
+ *
+ */
+
 /*
  * ================================================================================================================================
  * -> Private Macros
@@ -87,6 +97,15 @@
 
 /*
  * ================================================================================================================================
+ * -> Private Datatypes
+ * ================================================================================================================================
+ **/
+
+/** @brief Usability typedef */
+typedef struct linkedlist_ancestor lg_st_ll_ancestor_t;
+
+/*
+ * ================================================================================================================================
  * -> Private Enums
  * ================================================================================================================================
  **/
@@ -123,8 +142,6 @@ struct linkedlist_ancestor {
   struct linkedlist_ancestor *next;
   void *data;
 } _FORCE_PACKING(0);
-/** @brief Usability typedef */
-typedef struct linkedlist_ancestor lg_st_ll_ancestor_t;
 
 /**
  * @brief linked list struct class.
@@ -147,6 +164,11 @@ struct _sll_functions {
   en_ll_log_status (*remove_at_end)(struct linkedlist_ancestor *pa_ll_head);
   en_ll_log_status (*remove_at_kth)(struct linkedlist_ancestor *pa_ll_head,
                                     _CONST uint64 a_ll_kth_node);
+  en_ll_log_status (*delete)(struct linkedlist_ancestor *pa_ll_head);
+  /* Special requests */
+  en_ll_log_status (*fetch_at_kth)(struct linkedlist_ancestor *pa_ll_head,
+                                   struct linkedlist_ancestor **fetched_node,
+                                   _CONST uint64 node_kth);
 };
 struct _sll_struct {
   struct _sll_functions functions;
@@ -155,18 +177,12 @@ struct _sll_struct {
 
 /*
  * ================================================================================================================================
- * -> Private Datatypes
- * ================================================================================================================================
- **/
-
-/*
- * ================================================================================================================================
  * -> Private Functions Declaration
  * ================================================================================================================================
  **/
 
-_FORCE_INLINE _LOCAL_INLINE en_ll_log_status
-ll_create_heap(lg_st_ll_ancestor_t **pa_ll_node);
+_FORCE_INLINE
+_LOCAL_INLINE en_ll_log_status ll_create_heap(lg_st_ll_ancestor_t **pa_ll_node);
 
 _FORCE_INLINE
 _LOCAL_INLINE en_ll_log_status ll_append_node(
@@ -197,43 +213,57 @@ _FORCE_INLINE
 _LOCAL_INLINE en_ll_log_status ll_node_init(
     lg_st_ll_ancestor_t **_CONST pa_ll_node, void *_CONST pa_ll_node_data);
 
+_FORCE_INLINE
+_LOCAL_INLINE en_ll_log_status ll_list_delete(lg_st_ll_ancestor_t *pa_ll_head);
+
+_FORCE_INLINE
+_LOCAL_INLINE en_ll_log_status ll_fetch_node_kth(
+    lg_st_ll_ancestor_t *_CONST pa_ll_head,
+    lg_st_ll_ancestor_t **pa_ll_node_to_fetch, _CONST uint64 a_ll_kth_node);
+
 /*
  * ================================================================================================================================
  * -> Public Functions Implementation
  * ================================================================================================================================
  **/
 
+/**
+ * @brief Function used for primary testing.
+ *
+ */
+/*
 void portal_test(void) {
 
-  lg_st_ll_ancestor_t *myList = NULL;
+ lg_st_ll_ancestor_t *myList = NULL;
 
-  char name[] = "Mohamed";
-  char name2[] = "Body";
+ char name[] = "Mohamed";
+ char name2[] = "Body";
 
 #if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
-  _wxtrace_log("&name = %p", &name);
+ _wxtrace_log("&name = %p", &name);
 #endif
 
-  en_ll_log_status test = LOG_INFO_OK;
+ en_ll_log_status test = LOG_INFO_OK;
 
-  register uint8 i = 0;
+ register uint8 i = 0;
 
-  test = ll_append_node(&myList, &name);
-  test = ll_append_node(&myList, &name);
-  test = ll_append_node(&myList, &name);
-  test = ll_append_node(&myList, &name);
-  test = ll_append_node(&myList, &name);
-  test = ll_insert_node_kth(myList, &name2, 1);
-  test = ll_insert_node_kth(myList, &name2, 2);
-  // test = ll_remove_node_end(myList);
-  test = ll_remove_node_begin(&myList);
-  test = ll_remove_node_kth(myList, 1);
+ test = ll_append_node(&myList, &name);
+ test = ll_append_node(&myList, &name);
+ test = ll_append_node(&myList, &name);
+ test = ll_append_node(&myList, &name);
+ test = ll_append_node(&myList, &name);
+ test = ll_insert_node_kth(myList, &name2, 1);
+ test = ll_insert_node_kth(myList, &name2, 2);
+ test = ll_remove_node_end(myList);
+ test = ll_remove_node_begin(&myList);
+ test = ll_remove_node_kth(myList, 1);
 
-  for (i = 0; myList != NULL;) {
-    printf("%s\n", myList->data);
-    myList = myList->next;
-  }
+ for (i = 0; myList != NULL;) {
+   printf("%s\n", myList->data);
+   myList = myList->next;
+ }
 }
+*/
 
 /**
  * @brief the constructor functio for the sll class.
@@ -260,8 +290,8 @@ sll_class sll_getInstance(en_ll_user_status *a_log_status) {
     new_sll_class->functions.remove_at_begin = &ll_remove_node_begin;
     new_sll_class->functions.remove_at_end = &ll_remove_node_end;
     new_sll_class->functions.remove_at_kth = &ll_remove_node_kth;
-    // new_sll_class->functions.terminate         = NULL ;
-    /** @todo */
+    new_sll_class->functions.fetch_at_kth = &ll_fetch_node_kth;
+    new_sll_class->functions.delete = &ll_list_delete;
     l_this_function_log_status = InstanceCreateSucc;
   } else {
     l_this_function_log_status = InstanceCreateFail;
@@ -290,6 +320,8 @@ sll_class sll_getInstance(en_ll_user_status *a_log_status) {
  * @param myData
  */
 en_ll_user_status sll_append(sll_class mySllInstance, void *myData) {
+  STATIC_ASSERT((NULL != mySllInstance), -1);
+
   en_ll_user_status l_this_function_log_status = OK;
   en_ll_log_status l_append_function_log_status = LOG_STATUS_NOT_OK;
 
@@ -309,6 +341,262 @@ en_ll_user_status sll_append(sll_class mySllInstance, void *myData) {
     break;
   case InsertionFail:
     printf("\n Insertion Failed. \n");
+    break;
+  default:
+    break;
+  }
+#endif
+  return l_this_function_log_status;
+}
+
+/**
+ * @brief Function to push to sll.
+ *
+ * @param mySllInstance
+ * @param myData
+ */
+en_ll_user_status sll_push(sll_class mySllInstance, void *myData) {
+  STATIC_ASSERT((NULL != mySllInstance), -1);
+
+  en_ll_user_status l_this_function_log_status = OK;
+  en_ll_log_status l_push_function_log_status = LOG_STATUS_NOT_OK;
+
+  l_push_function_log_status =
+      mySllInstance->functions.push(&mySllInstance->sll_head, myData);
+
+  if ((LOG_STATUS_OK == l_push_function_log_status)) {
+    l_this_function_log_status = InsertionSucc;
+  } else {
+    l_this_function_log_status = InsertionFail;
+  }
+
+#if (DUI_ACTIVE == DETAILED_USER_INTERFACE)
+  switch (l_this_function_log_status) {
+  case InsertionSucc:
+    printf("\n Insertion done succesfully. \n");
+    break;
+  case InsertionFail:
+    printf("\n Insertion Failed. \n");
+    break;
+  default:
+    break;
+  }
+#endif
+  return l_this_function_log_status;
+}
+
+/**
+ * @brief Function to insert function at index kth to sll.
+ *
+ * @param mySllInstance
+ * @param myData
+ */
+en_ll_user_status sll_insert_kth(sll_class mySllInstance, void *myData,
+                                 uint64 _CONST myKth) {
+  STATIC_ASSERT((NULL != mySllInstance), -1);
+
+  en_ll_user_status l_this_function_log_status = OK;
+  en_ll_log_status l_push_function_log_status = LOG_STATUS_NOT_OK;
+
+  l_push_function_log_status = mySllInstance->functions.insert_kth(
+      mySllInstance->sll_head, myData, myKth);
+
+  if ((LOG_STATUS_OK == l_push_function_log_status)) {
+    l_this_function_log_status = InsertionSucc;
+  } else {
+    l_this_function_log_status = InsertionFail;
+  }
+
+#if (DUI_ACTIVE == DETAILED_USER_INTERFACE)
+  switch (l_this_function_log_status) {
+  case InsertionSucc:
+    printf("\n Insertion done succesfully. \n");
+    break;
+  case InsertionFail:
+    printf("\n Insertion Failed. \n");
+    break;
+  default:
+    break;
+  }
+#endif
+  return l_this_function_log_status;
+}
+
+/**
+ * @brief
+ *
+ * @param mySllInstance
+ * @param myData
+ */
+en_ll_user_status sll_remove_at_begin(sll_class mySllInstance) {
+  STATIC_ASSERT((NULL != mySllInstance), -1);
+
+  en_ll_user_status l_this_function_log_status = OK;
+  en_ll_log_status l_push_function_log_status = LOG_STATUS_NOT_OK;
+
+  l_push_function_log_status =
+      mySllInstance->functions.remove_at_begin(&mySllInstance->sll_head);
+
+  if ((LOG_STATUS_OK == l_push_function_log_status)) {
+    l_this_function_log_status = DeletionSucc;
+  } else {
+    l_this_function_log_status = DeletionFail;
+  }
+
+#if (DUI_ACTIVE == DETAILED_USER_INTERFACE)
+  switch (l_this_function_log_status) {
+  case DeletionSucc:
+    printf("\n Deletion done succesfully. \n");
+    break;
+  case DeletionFail:
+    printf("\n Deletion Failed. \n");
+    break;
+  default:
+    break;
+  }
+#endif
+  return l_this_function_log_status;
+}
+
+/**
+ * @brief
+ *
+ * @param mySllInstance
+ * @param myData
+ */
+en_ll_user_status sll_remove_at_end(sll_class mySllInstance) {
+  STATIC_ASSERT((NULL != mySllInstance), -1);
+
+  en_ll_user_status l_this_function_log_status = OK;
+  en_ll_log_status l_push_function_log_status = LOG_STATUS_NOT_OK;
+
+  l_push_function_log_status =
+      mySllInstance->functions.remove_at_end(mySllInstance->sll_head);
+
+  if ((LOG_STATUS_OK == l_push_function_log_status)) {
+    l_this_function_log_status = DeletionSucc;
+  } else {
+    l_this_function_log_status = DeletionFail;
+  }
+
+#if (DUI_ACTIVE == DETAILED_USER_INTERFACE)
+  switch (l_this_function_log_status) {
+  case DeletionSucc:
+    printf("\n Deletion done succesfully. \n");
+    break;
+  case DeletionFail:
+    printf("\n Deletion Failed. \n");
+    break;
+  default:
+    break;
+  }
+#endif
+  return l_this_function_log_status;
+}
+
+/**
+ * @brief
+ *
+ * @param mySllInstance
+ * @param myData
+ */
+en_ll_user_status sll_remove_at_kth(sll_class mySllInstance,
+                                    uint64 _CONST myKth) {
+  STATIC_ASSERT((NULL != mySllInstance), -1);
+
+  en_ll_user_status l_this_function_log_status = OK;
+  en_ll_log_status l_push_function_log_status = LOG_STATUS_NOT_OK;
+
+  l_push_function_log_status =
+      mySllInstance->functions.remove_at_kth(mySllInstance->sll_head, myKth);
+
+  if ((LOG_STATUS_OK == l_push_function_log_status)) {
+    l_this_function_log_status = DeletionSucc;
+  } else {
+    l_this_function_log_status = DeletionFail;
+  }
+
+#if (DUI_ACTIVE == DETAILED_USER_INTERFACE)
+  switch (l_this_function_log_status) {
+  case DeletionSucc:
+    printf("\n Deletion done succesfully. \n");
+    break;
+  case DeletionFail:
+    printf("\n Deletion Failed. \n");
+    break;
+  default:
+    break;
+  }
+#endif
+  return l_this_function_log_status;
+}
+
+/**
+ * @brief
+ *
+ * @param mySllInstance
+ * @param myData
+ */
+en_ll_user_status fetch_at_kth(sll_class mySllInstance,
+                               lg_st_ll_ancestor_t **myFetchedNode,
+                               uint64 _CONST myKth) {
+  STATIC_ASSERT((NULL != mySllInstance), -1);
+
+  en_ll_user_status l_this_function_log_status = NOK;
+  en_ll_log_status l_push_function_log_status = LOG_STATUS_NOT_OK;
+
+  l_push_function_log_status = mySllInstance->functions.fetch_at_kth(
+      mySllInstance->sll_head, myFetchedNode, myKth);
+
+  if ((LOG_STATUS_OK == l_push_function_log_status)) {
+    l_this_function_log_status = OK;
+  } else {
+    l_this_function_log_status = NOK;
+  }
+
+#if (DUI_ACTIVE == DETAILED_USER_INTERFACE)
+  switch (l_this_function_log_status) {
+  case OK:
+    printf("\n Fetching done succesfully. \n");
+    break;
+  case NOK:
+    printf("\n Fetching Failed. \n");
+    break;
+  default:
+    break;
+  }
+#endif
+  return l_this_function_log_status;
+}
+
+/**
+ * @brief
+ *
+ * @param mySllInstance
+ * @param myData
+ */
+en_ll_user_status sll_list_delete(sll_class mySllInstance) {
+  STATIC_ASSERT((NULL != mySllInstance), -1);
+
+  en_ll_user_status l_this_function_log_status = OK;
+  en_ll_log_status l_push_function_log_status = LOG_STATUS_NOT_OK;
+
+  l_push_function_log_status =
+      mySllInstance->functions.delete(mySllInstance->sll_head);
+
+  if ((LOG_STATUS_OK == l_push_function_log_status)) {
+    l_this_function_log_status = DeletionSucc;
+  } else {
+    l_this_function_log_status = DeletionFail;
+  }
+
+#if (DUI_ACTIVE == DETAILED_USER_INTERFACE)
+  switch (l_this_function_log_status) {
+  case DeletionSucc:
+    printf("\n Deletion done succesfully. \n");
+    break;
+  case DeletionFail:
+    printf("\n Deletion Failed. \n");
     break;
   default:
     break;
@@ -577,7 +865,7 @@ _LOCAL_INLINE en_ll_log_status ll_push_node(
  * @param pa_ll_head
  * @param pa_ll_node_data
  * @param a_ll_kth_node
- * @return _LOCAL_INLINE
+ * @return en_ll_log_status
  */
 _LOCAL_INLINE en_ll_log_status
 ll_insert_node_kth(lg_st_ll_ancestor_t *_CONST pa_ll_head,
@@ -799,7 +1087,7 @@ _LOCAL_INLINE en_ll_log_status ll_remove_node_kth(
  *
  * @param pa_ll_node
  * @param pa_ll_node_data
- * @return _LOCAL_INLINE
+ * @return en_ll_log_status
  */
 _LOCAL_INLINE en_ll_log_status ll_node_init(
     lg_st_ll_ancestor_t **_CONST pa_ll_node, void *_CONST pa_ll_node_data) {
@@ -822,6 +1110,42 @@ _LOCAL_INLINE en_ll_log_status ll_node_init(
   _wxtrace_log("lp_temp_ptr_to_node->next = %p", lp_temp_ptr_to_node->next);
   _wxtrace_log("lp_temp_ptr_to_node->data = %p", lp_temp_ptr_to_node->data);
 #endif
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+  _wxtrace_log("l_this_function_log_status: %d", l_this_function_log_status);
+#endif
+  return l_this_function_log_status;
+}
+
+/**
+ * @brief Function to fetch a speicfic node address (kth node).
+ *
+ * @param pa_ll_head
+ * @return en_ll_log_status
+ */
+_LOCAL_INLINE en_ll_log_status ll_fetch_node_kth(
+    lg_st_ll_ancestor_t *_CONST pa_ll_head,
+    lg_st_ll_ancestor_t **pa_ll_node_to_fetch, _CONST uint64 a_ll_kth_node) {
+  en_ll_log_status l_this_function_log_status = LOG_STATUS_NOT_OK;
+  ;
+  ; /** @todo Implement @p fetch_node_kth function. */
+  ;
+#if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
+  _wxtrace_log("l_this_function_log_status: %d", l_this_function_log_status);
+#endif
+  return l_this_function_log_status;
+}
+
+/**
+ * @brief Function to delete a list from (head to NULL)
+ *
+ * @param pa_ll_head
+ * @return en_ll_log_status
+ */
+_LOCAL_INLINE en_ll_log_status ll_list_delete(lg_st_ll_ancestor_t *pa_ll_head) {
+  en_ll_log_status l_this_function_log_status = LOG_STATUS_NOT_OK;
+  ;
+  ; /** @todo Implement @p ll_delete function. */
+  ;
 #if (WXTRACE_LOG_STATE == WXTRACE_LOG_STATE_ACTIVE)
   _wxtrace_log("l_this_function_log_status: %d", l_this_function_log_status);
 #endif

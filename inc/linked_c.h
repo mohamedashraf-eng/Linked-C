@@ -70,7 +70,7 @@ extern "C" {
 
 /*
  * ================================================================================================================================
- * -> Public Structs
+ * -> Public Datatypes
  * ================================================================================================================================
  **/
 
@@ -82,19 +82,22 @@ typedef struct _sll_struct *sll_class;
  * ================================================================================================================================
  **/
 
-/*
- * ================================================================================================================================
- * -> Public Datatypes
- * ================================================================================================================================
- **/
-
 typedef enum ll_status {
   InstanceCreateSucc = 0,
   InstanceCreateFail,
   InsertionSucc,
   InsertionFail,
+  DeletionSucc,
+  DeletionFail,
+  NOK,
   OK
 } en_ll_user_status;
+
+/*
+ * ================================================================================================================================
+ * -> Public Structs
+ * ================================================================================================================================
+ **/
 
 /*
  * ================================================================================================================================
@@ -102,11 +105,69 @@ typedef enum ll_status {
  * ================================================================================================================================
  **/
 
-/** @brief temporary testing function `the portal` */
-void portal_test(void);
-
+/**
+ * @brief
+ *
+ * @param a_log_status
+ * @return sll_class
+ */
 sll_class sll_getInstance(en_ll_user_status *a_log_status);
+/**
+ * @brief
+ *
+ * @param mySllInstance
+ * @param myData
+ * @return en_ll_user_status
+ */
 en_ll_user_status sll_append(sll_class mySllInstance, void *myData);
+/**
+ * @brief
+ *
+ * @param mySllInstance
+ * @param myData
+ * @return en_ll_user_status
+ */
+en_ll_user_status sll_push(sll_class mySllInstance, void *myData);
+/**
+ * @brief
+ *
+ * @param mySllInstance
+ * @param myData
+ * @param myKth
+ * @return en_ll_user_status
+ */
+en_ll_user_status sll_insert_kth(sll_class mySllInstance, void *myData,
+                                 uint64 _CONST myKth);
+/**
+ * @brief
+ *
+ * @param mySllInstance
+ * @return en_ll_user_status
+ */
+en_ll_user_status sll_remove_at_begin(sll_class mySllInstance);
+/**
+ * @brief
+ *
+ * @param mySllInstance
+ * @return en_ll_user_status
+ */
+en_ll_user_status sll_remove_at_end(sll_class mySllInstance);
+/**
+ * @brief
+ *
+ * @param mySllInstance
+ * @param myKth
+ * @return en_ll_user_status
+ */
+en_ll_user_status sll_remove_at_kth(sll_class mySllInstance,
+                                    uint64 _CONST myKth);
+/**
+ * @brief
+ *
+ * @param mySllInstance
+ * @return en_ll_user_status
+ */
+en_ll_user_status sll_list_delete(sll_class mySllInstance);
 
 /** @def C++ Guards */
 #ifdef __cplusplus
