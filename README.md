@@ -79,5 +79,9 @@ Set the macro `DETAILED_USER_INTERFACE` to `DUI_ACTIVE` in `linked_c.h`
 #define DETAILED_USER_INTERFACE (DUI_ACTIVE)
 ```
 
+## Something went wrong?
+Feel free to fork modify & pull.  
+Or **Create a new Issue with the specified problem.**  
+
 ## Credits
 [mohamedashraf-eng](https://github.com/mohamedashraf-eng)
