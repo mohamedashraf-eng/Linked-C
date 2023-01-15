@@ -22,6 +22,7 @@ int main(void) {
 
   double data = 5.0;
   sll_append(sll_instance, &data);
+  sll_push(sll_instance, &data);
 
   printf("\n");
   while (1) {
