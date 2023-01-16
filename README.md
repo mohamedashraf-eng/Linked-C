@@ -1,6 +1,11 @@
 <p align="center">
-  <img width="400" height="400" src="https://j.top4top.io/p_2562ucj861.png">
-</p>
+  <img width="350" height="160" src="https://d.top4top.io/p_2572jgejz1.png">
+</p>  
+
+![GitHub](https://komarev.com/ghpvc/?username=Linked-C&color=dc143c&label=Traffic) 
+![GitHub last commit (branch)](https://img.shields.io/github/last-commit/mohamedashraf-eng/Linked-C/main)
+![GitHub](https://img.shields.io/github/license/mohamedashraf-eng/Linked-C)  
+![GitHub](https://img.shields.io/github/followers/mohamedashraf-eng?style=social)
 
 ## About library  
 The library is mainly built to reduce the complexity of implementing linked list in c every time user want to use or implement something with it.  
